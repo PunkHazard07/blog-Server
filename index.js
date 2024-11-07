@@ -2,6 +2,7 @@ const express = require('express');
 //import the postRoute
 const postRoute = require('./routes/postRoute');
 const userRoutes = require('./routes/userRoutes') 
+const cors = require('cors');
 
 require('dotenv').config(); //import env file
 
@@ -20,6 +21,12 @@ app.get('/', (req, res) => {
 });
 //importing the middleware
 app.use(express.json())
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174'], //allow requests from local host
+    credentials: true, //allow credentials to be sent with the request
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  //allow specific HTTP methods
+    allowedHeaders:['Content-Type', 'Authorization']
+}))
 
 app.use('/api', postRoute)
 app.use('/api', userRoutes)

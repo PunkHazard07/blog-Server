@@ -1,10 +1,12 @@
 const express = require('express');
 const Post = require('../models/Post');//import the Post model
 const router = express.Router(); //Create a new router instance
+const nodemailer = require('nodemailer')
 
 //fectch all post endpoint
 router.get('/post', async (req, res) => {
     try{
+        
         const posts = await Post.find();
         res.status(200).json({
             success: true,
@@ -115,6 +117,44 @@ router.get('/posts/category/:category', async (req, res) => {
     }
 });
 
+//endpoint for sending mail
+router.post('/sendMail', async (req, res) => {
+     //destructure the request body
+    const {firstName, phoneNumber, email, subject} = req.body;
+     //create a new email
+    const messageData = `
+    FullName: ${firstName},
+    PhoneNumber: ${phoneNumber},
+    Email: ${email},
+    Subject: ${subject}
+    `
+     //nodemailer for sending mail
+    
+    const mail = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'belloayoola20@gmail.com',
+        pass: 'nnus jqcy wcci uumm'
+    }
+});
+
+const mailOption = {
+    from: 'belloayoola20@gmail.com',
+    to: 'izuchi.alaneme@gmail.com, belloayoola20@gmail.com',
+    subject: `${subject}`,
+    text: `${messageData}`
+};
+
+mail.sendMail(mailOption, (error, info) => {
+    if (error){
+        console.log(error)
+    }else{
+        console.log('Email sent' + info.response);
+    }
+})
+
+});
+    
 
 //export the router to use it in the main server
 module.exports = router;
